@@ -1,43 +1,45 @@
- **Note:** This version was adapted to use the Groq API (free tier, OpenAI-compatible) instead of Azure OpenAI. Set GROQ_API_KEY in your .env file (see .env.sample).
-# **Multi-Agent PostgreSQL Data Management System with AutoGen and Azure PostgreSQL**
+**Note:** This version was adapted to use the Groq API (free tier, OpenAI-compatible) instead of Azure OpenAI. Set GROQ_API_KEY in your .env file (see .env.sample).
+
+# **Multi-Agent PostgreSQL Data Management System with AutoGen and Groq**
 
 
 <div align="center">
-  <img src="https://github.com/mehrsa/MultiAgent_Azure_PostgreSQL_AutoGen0.4/blob/main/misc/Drawing%203.png" alt="Architecture">
+  <img src="misc/Drawing%203.png" alt="Architecture">
 </div>
 
-This repository demonstrates how to build a **multi-agent AI system** for managing shipment data stored on an Azure PostgreSQL database. Core technologies used are:
+This repository demonstrates how to build a **multi-agent AI system** for managing shipment data stored on a PostgreSQL database. Core technologies used are:
 
 - **AutoGen** for coordinating AI agents in collaborative workflows.
-- **Azure OpenAI GPT-4** for intelligent language understanding and generation of SQL queries in PostgreSQL.
-- **Azure Database for PostgreSQL** for data storage and querying.
+- **Groq API (openai/gpt-oss-120b)** for language understanding and generation of SQL queries in PostgreSQL.
+- **PostgreSQL** for data storage and querying.
 
-The application showcases a shipping company where agents manage shipments, customer and product information. The main goal of this repository is to illustrate how easy it is to have agents work together to not only answer questions regarding the data, but also help modify the data based on user requirements and even help create and use new stored procedures. It extends the "Chat With Your Data" to "Chat, Act and Code on Your Data". ** We welcome contributions to help make those agents more reliable and under guardrails. Feel free to contribute to more agents as well! **
+The application showcases a shipping company where agents manage shipments, customer and product information. The main goal of this repository is to illustrate how easy it is to have agents work together to not only answer questions regarding the data, but also help modify the data based on user requirements and even help create and use new stored procedures. It extends the "Chat With Your Data" to "Chat, Act and Code on Your Data".
 
 ## **Features**
 
 - 🤖 **AutoGen Multi-Agent System**: Agents collaborate to handle specific tasks:
   - **SchemaAgent**: Manages database schema retrieval and sharing. It is also allowed to create stored procedures.
   - **ShipmentAgent**: Handles shipment-related queries and updates.
-  - **CRMAgent**: Manages customer and product-related data. 
-- 🧠 **Azure OpenAI GPT-4**: Generates SQL queries and natural language responses.
-- 🛢️ **Azure PostgreSQL**: Stores shipment, customer, and product data.
+  - **CRMAgent**: Manages customer and product-related data.
+- 🧠 **Groq (openai/gpt-oss-120b)**: Generates SQL queries and natural language responses.
+- 🛢️ **PostgreSQL**: Stores shipment, customer, and product data.
 
 The system is created in a modular way as below, to make it easier for testing via plug-and-play and also further expansion:
 - **pg_utils.py** -> Provides a class and tools for enabling agents to connect to the database and perform various tasks
 - **agent_tools.py** -> Has functions for creating required expert agents.
-- **multi_agent_chats.py** -> Provides a class to initiate various types of group chats (aka teams). 
+- **multi_agent_chats.py** -> Provides a class to initiate various types of group chats (aka teams).
 
 
 ## Follow below steps to set up:
 
-- Ensure Python version is **3.11.9**
+- Ensure Python version is **3.10** or higher
 - Install all packages in **requirements.txt**
     - pip install -r requirements.txt
-- You need an Azure account with:
-  - **Azure OpenAI Service** (GPT-4 deployed). 
-  - **Azure Database for PostgreSQL** (configured with necessary tables via provided SQL_Queries.sql)
-    - You can use the provided helper file called db_util.py to set up your db. Just ensure to update .env file with your own credentials.
+- Install PostgreSQL locally and create a database (for example, one named "shipping")
+- Get a free API key from Groq (https://console.groq.com)
+- Copy **.env.sample** to **.env** and fill in your own PostgreSQL values and GROQ_API_KEY
+- Run **db_init.py** once to create the tables from SQL_Queries.sql
+
 ## Test the system
 
 You can test out the system in two ways:
@@ -51,7 +53,7 @@ You can test out the system in two ways:
 ### Group chats available to test
 #### Multi-agent group chat with a **planner agent**
 Provides a multi-agent human-in-loop group chat for answering user's question from the database.
-This uses a team type called "SelectorGroupChat". A planer agent is defined which is tasked with breaking down the ask to simpler tasks and identifying the right sequence of calling expert agents to execute those. 
+This uses a team type called "SelectorGroupChat". A planner agent is defined which is tasked with breaking down the ask to simpler tasks and identifying the right sequence of calling expert agents to execute those.
 
 
 #### Multi-agent group chat in a **roundrobin fashion**
@@ -62,7 +64,6 @@ In this type of team, agents take turn trying to address the ask considering the
 #### Multi-agent group chat using **MagenticOne**[1]
 A team that runs a group chat with participants managed by the MagenticOneOrchestrator. This type of team is optimized for managing more complex tasks.
 
-##
 
 #### Any issues? please report and reach out!
 
